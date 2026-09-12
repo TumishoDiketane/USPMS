@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Dashboard — USPMS</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="css/theme.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ============================================================
+   RESET
+============================================================ */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #0F204B;
+  background: #F8F9FA;
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font-family: inherit; }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+
+:focus-visible {
+  outline: 2px solid #0F204B;
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   HEADER
+============================================================ */
+.header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 56px;
+  background: #FFFFFF;
+  border-bottom: 1px solid rgba(15,32,75,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(15,32,75,0.05);
+}
+
+.header-left { display: flex; align-items: center; gap: 16px; }
+
+.hamburger-btn {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 150ms ease;
+  color: #0F204B;
+}
+.hamburger-btn:hover { background: #F8F9FA; }
+.hamburger-btn svg { width: 20px; height: 20px; }
+
+.logo-area {
+  display: none;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-area img.ufs-logo {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+}
+
+.logo-area .logo-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(15, 32, 75, 0.12);
+}
+
+.logo-area img.helios-logo {
+  height: 26px;
+  width: auto;
+  object-fit: contain;
+}
+
+.header-hex {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.header-title-desktop { display: none; }
+.header-title-mobile { display: inline; }
+.header-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0F204B;
+  letter-spacing: -0.01em;
+}
+
+.header-right { display: flex; align-items: center; gap: 8px; }
+
+.notif-btn {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+.notif-btn:hover { background: #F8F9FA; }
+.notif-btn svg { width: 20px; height: 20px; color: #636669; }
+
+.notif-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #A71930;
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #FFFFFF;
+}
+
+.user-menu { position: relative; }
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #0F204B;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: box-shadow 150ms ease;
+  border: none;
+}
+.avatar:hover { box-shadow: 0 0 0 3px rgba(15,32,75,0.12); }
+
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  width: 220px;
+  background: #FFFFFF;
+  border: 1px solid rgba(15,32,75,0.08);
+  border-radius: 12px;
+  box-shadow: 0 10px 15px rgba(15,32,75,0.1);
+  padding: 8px;
+  display: none;
+  z-index: 200;
+}
+.user-dropdown.open { display: block; }
+
+.dropdown-header {
+  padding: 12px;
+  border-bottom: 1px solid rgba(15,32,75,0.06);
+  margin-bottom: 4px;
+}
+.dropdown-name { font-size: 14px; font-weight: 600; color: #0F204B; }
+.dropdown-email { font-size: 12px; color: #9EA3A8; margin-top: 2px; }
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #374151;
+  cursor: pointer;
+  transition: background 150ms ease;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+.dropdown-item:hover { background: #F8F9FA; }
+.dropdown-item svg { width: 16px; height: 16px; color: #636669; flex-shrink: 0; }
+
+.dropdown-divider { height: 1px; background: rgba(15,32,75,0.06); margin: 4px 0; }
+
+.dropdown-item.logout { color: #DC2626; }
+.dropdown-item.logout:hover { background: #FEF2F2; }
+.dropdown-item.logout svg { color: #DC2626; }
+
+/* ============================================================
+   SIDEBAR (desktop only)
+============================================================ */
+.sidebar {
+  display: none;
+  position: fixed;
+  top: 64px;
+  left: 0;
+  bottom: 0;
+  width: 240px;
+  background: #0F204B;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  padding: 16px 12px;
+  overflow-y: auto;
+  z-index: 90;
+}
+
+.nav-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 12px 12px 8px;
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.75);
+  transition: all 150ms ease;
+  margin-bottom: 2px;
+  cursor: pointer;
+  position: relative;
+}
+.sidebar-nav-item:hover { background: rgba(255,255,255,0.08); color: #FFFFFF; }
+.sidebar-nav-item.active {
+  background: rgba(255,255,255,0.16);
+  color: #FFFFFF;
+  font-weight: 600;
+}
+.sidebar-nav-item.active::before {
+  display: none;
+}
+.sidebar-nav-item svg { width: 20px; height: 20px; flex-shrink: 0; color: currentColor; }
+
+.sidebar-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.sidebar-powered-by {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+}
+.sidebar-helios-logo {
+  height: 18px;
+  width: auto;
+  object-fit: contain;
+  opacity: 0.95;
+}
+.sidebar-powered-by img.sidebar-helios-logo {
+  height: 18px;
+  width: auto;
+  object-fit: contain;
+}
+.sidebar-hex { width: 24px; height: 24px; flex-shrink: 0; }
+
+/* ============================================================
+   BOTTOM NAVIGATION (mobile only)
+============================================================ */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 64px;
+  background: #FFFFFF;
+  border-top: 1px solid rgba(15,32,75,0.06);
+  display: flex;
+  z-index: 100;
+  box-shadow: 0 -1px 3px rgba(15,32,75,0.05);
+}
+
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 0;
+  color: #9EA3A8;
+  transition: color 150ms ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.bottom-nav-item.active { color: #0F204B; }
+.bottom-nav-item svg { width: 22px; height: 22px; }
+.bottom-nav-label { font-size: 10px; font-weight: 500; }
+
+/* ============================================================
+   MAIN CONTENT
+============================================================ */
+.main-content {
+  padding-top: 72px;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-bottom: 80px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.card {
+  background: #FFFFFF;
+  border: 1px solid rgba(15,32,75,0.06);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(15,32,75,0.05);
+}
+
+/* ============================================================
+   WELCOME CARD
+============================================================ */
+.welcome-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.greeting {
+  font-size: 24px;
+  font-weight: 600;
+  color: #0F204B;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(5,150,105,0.1);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #059669;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.status-badge svg { width: 14px; height: 14px; }
+
+.permit-details-card {
+  background: #F8F9FA;
+  border: 1px solid rgba(15,32,75,0.04);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.permit-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.permit-row { display: flex; align-items: flex-start; gap: 10px; }
+.permit-row-icon {
+  width: 16px;
+  height: 16px;
+  color: #636669;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.permit-row-text { display: flex; flex-direction: column; gap: 4px; }
+.permit-label { font-size: 12px; color: #9EA3A8; font-weight: 500; }
+.permit-value { font-size: 14px; color: #0F204B; font-weight: 500; }
+
+/* ============================================================
+   CARD HEADER ROW (shared)
+============================================================ */
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0F204B;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.live-dot-icon { width: 18px; height: 18px; color: #A71930; flex-shrink: 0; }
+.live-dot-icon .pulse-circle { animation: livePulse 1.8s infinite ease-out; transform-origin: center; }
+@keyframes livePulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.view-map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0F204B;
+  transition: color 150ms ease;
+}
+.view-map-link svg { width: 14px; height: 14px; }
+.view-map-link:hover { color: #A71930; }
+
+/* ============================================================
+   CAPACITY GRID
+============================================================ */
+.capacity-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.capacity-card {
+  background: #F8F9FA;
+  border: 1px solid rgba(15,32,75,0.04);
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 200ms ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.capacity-card.assigned { border-left: none; }
+.capacity-card.dimmed { opacity: 0.7; }
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-available { background: #059669; }
+.dot-limited { background: #D97706; }
+.dot-full { background: #DC2626; }
+
+.status-circle {
+  display: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #FFFFFF;
+  flex-shrink: 0;
+}
+.status-circle svg { width: 20px; height: 20px; }
+.circle-available { background: #059669; }
+.circle-limited { background: #D97706; }
+.circle-full { background: #DC2626; }
+
+.capacity-info { flex: 1; min-width: 0; }
+.capacity-zone-name { font-size: 14px; font-weight: 600; color: #0F204B; }
+.capacity-zone-type-mobile {
+  font-size: 11px;
+  color: #636669;
+  margin-top: 2px;
+}
+
+.capacity-count { text-align: right; flex-shrink: 0; }
+.capacity-spot-count { font-size: 18px; font-weight: 700; }
+.count-available { color: #059669; }
+.count-limited { color: #D97706; }
+.count-full { color: #DC2626; }
+.capacity-spot-label {
+  font-size: 12px;
+  color: #9EA3A8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.capacity-zone-type-desktop { display: none; }
+
+.capacity-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(15,32,75,0.06);
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.last-updated {
+  font-size: 12px;
+  color: #9EA3A8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.last-updated svg { width: 14px; height: 14px; }
+
+.refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: none;
+  border: 1px solid rgba(15,32,75,0.12);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #636669;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+.refresh-btn:hover { background: #F8F9FA; border-color: rgba(15,32,75,0.2); }
+.refresh-btn svg { width: 14px; height: 14px; transition: transform 0.6s ease; }
+.refresh-btn.spinning svg { transform: rotate(360deg); }
+
+/* ============================================================
+   GATE CONGESTION CARD
+============================================================ */
+.gate-card {
+  border-radius: 16px;
+}
+
+.gate-header-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.alert-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #D97706;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.alert-icon-box svg { width: 18px; height: 18px; color: #FFFFFF; }
+
+.gate-title { font-size: 15px; font-weight: 600; color: #0F204B; }
+
+.gate-rows { display: flex; flex-direction: column; gap: 12px; }
+
+.gate-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #F8F9FA;
+  border-radius: 10px;
+  border: 1px solid rgba(15,32,75,0.04);
+  flex-wrap: wrap;
+}
+
+.gate-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.gate-dot-light { background: #059669; }
+.gate-dot-moderate { background: #D97706; }
+.gate-dot-heavy {
+  background: #DC2626;
+  box-shadow: 0 0 0 3px rgba(220,38,38,0.2);
+  animation: gatePulse 1.6s infinite;
+}
+@keyframes gatePulse {
+  0% { box-shadow: 0 0 0 0 rgba(220,38,38,0.35); }
+  70% { box-shadow: 0 0 0 6px rgba(220,38,38,0); }
+  100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); }
+}
+
+.gate-name { font-size: 14px; font-weight: 500; color: #0F204B; flex: 1; min-width: 90px; }
+
+.gate-status-badge {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.badge-light { background: #059669; color: #FFFFFF; }
+.badge-moderate { background: #D97706; color: #FFFFFF; }
+.badge-heavy { background: #DC2626; color: #FFFFFF; }
+
+.gate-wait { font-size: 12px; color: #9EA3A8; min-width: 100px; text-align: right; }
+
+.suggestion-box {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: rgba(15,32,75,0.03);
+  border: 1px solid rgba(15,32,75,0.06);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.suggestion-box svg { width: 16px; height: 16px; color: #0F204B; flex-shrink: 0; }
+.suggestion-box span { font-size: 13px; color: #0F204B; line-height: 1.5; }
+
+/* ============================================================
+   QUICK ACTIONS
+============================================================ */
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0F204B;
+  margin-bottom: 20px;
+}
+
+.actions-grid {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.actions-grid::-webkit-scrollbar { display: none; }
+
+.action-card {
+  min-width: 120px;
+  flex-shrink: 0;
+  background: #F8F9FA;
+  border: 1px solid rgba(15,32,75,0.04);
+  border-radius: 12px;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.action-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.action-icon-box svg { width: 22px; height: 22px; }
+
+.icon-apply { background: rgba(15,32,75,0.08); }
+.icon-apply svg { color: #0F204B; }
+.icon-pay { background: rgba(220,38,38,0.08); }
+.icon-pay svg { color: #DC2626; }
+.icon-myapps { background: rgba(99,102,105,0.08); }
+.icon-myapps svg { color: #636669; }
+.icon-visitor { background: rgba(167,25,48,0.08); }
+.icon-visitor svg { color: #A71930; }
+
+.action-label { font-size: 13px; font-weight: 600; color: #0F204B; text-align: center; }
+.action-sublabel { font-size: 11px; color: #9EA3A8; text-align: center; margin-top: -4px; }
+
+/* ============================================================
+   MEDIA QUERIES
+============================================================ */
+@media (max-width: 1023px) {
+  .bottom-nav { display: flex; }
+  .sidebar { display: none; }
+}
+
+@media (min-width: 768px) {
+  .capacity-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .capacity-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+    gap: 8px;
+  }
+  .capacity-card .status-dot { display: none; }
+  .status-circle { display: flex; }
+  .capacity-info { text-align: center; }
+  .capacity-zone-name { font-size: 15px; }
+  .capacity-spot-count { font-size: 22px; }
+  .capacity-count { text-align: center; }
+  .capacity-zone-type-mobile { display: none; }
+  .capacity-zone-type-desktop {
+    display: inline-block;
+    font-size: 12px;
+    color: #636669;
+    background: rgba(15,32,75,0.06);
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin-top: 8px;
+  }
+
+  .actions-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .action-card { min-width: 0; width: auto; }
+
+  .permit-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (min-width: 1024px) {
+  body { background: #F8F9FA; }
+
+  .header { height: 64px; padding: 0 24px; }
+  .hamburger-btn { display: none; }
+  .logo-area { display: flex; }
+  .header-title-desktop { display: inline; }
+  .header-title-mobile { display: none; }
+  .avatar { width: 40px; height: 40px; }
+  .header-right { gap: 16px; }
+
+  .sidebar { display: block; }
+  .bottom-nav { display: none; }
+
+  .main-content {
+    padding-top: 96px;
+    padding-left: calc(240px + 32px);
+    padding-right: 32px;
+    padding-bottom: 32px;
+    gap: 24px;
+  }
+
+  .card { padding: 32px; }
+  .greeting { font-size: 28px; }
+
+  .capacity-card:hover {
+    box-shadow: 0 4px 6px rgba(15,32,75,0.07);
+    transform: translateY(-2px);
+  }
+  .action-card:hover {
+    background: #FFFFFF;
+    border-color: rgba(15,32,75,0.12);
+    box-shadow: 0 4px 6px rgba(15,32,75,0.07);
+    transform: translateY(-2px);
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+  <div class="header-left">
+    <button class="hamburger-btn" id="hamburger-btn" aria-label="Open navigation menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+
+    <div class="logo-area">
+      <img src="images/University_of_the_Free_State_shield.svg" alt="UFS" class="ufs-logo">
+      <div class="logo-divider"></div>
+      <img src="images/Dynamic Logo Design with Custom Typeface.png" alt="Helios" class="helios-logo">
+    </div>
+
+    <span class="header-title-badge">Dashboard</span>
+  </div>
+
+  <div class="header-right">
+    <a class="notif-btn" href="notifications.html" aria-label="Notifications">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span class="notif-badge">3</span>
+    </a>
+
+    <div class="user-menu">
+      <button class="avatar" id="avatar-btn" aria-label="Account menu" aria-haspopup="true" aria-expanded="false">JD</button>
+      <div class="user-dropdown" id="user-dropdown">
+        <div class="dropdown-header">
+          <div class="dropdown-name">
+            <span>John Doe</span>
+            <span class="dropdown-role-tag">Student</span>
+          </div>
+          <div class="dropdown-email">john.doe@ufs4life.ac.za</div>
+        </div>
+        <a href="dashboard.html" class="dropdown-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          My Profile
+        </a>
+        <a href="my-applications.html" class="dropdown-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          My Permits
+        </a>
+        <a href="my-fines.html" class="dropdown-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          My Fines
+        </a>
+        <a href="admin-approvals.html" class="dropdown-item role-switch">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Switch to Admin View
+        </a>
+        <div class="dropdown-divider"></div>
+        <a href="index.html" class="dropdown-item logout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Log Out
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= MOBILE SLIDE-OUT DRAWER ================= -->
+<div class="mobile-drawer-overlay" id="drawer-overlay"></div>
+<aside class="mobile-drawer" id="mobile-drawer">
+  <div class="drawer-header">
+    <button class="drawer-close-btn" id="drawer-close-btn" aria-label="Close menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="drawer-user-info">
+      <div class="drawer-avatar">JD</div>
+      <div class="drawer-user-details">
+        <div class="name">John Doe</div>
+        <div class="role">Student • #202400847</div>
+      </div>
+    </div>
+  </div>
+  <nav class="drawer-nav">
+    <div class="nav-section-label">Main Navigation</div>
+    <a href="dashboard.html" class="sidebar-nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Home
+    </a>
+    <a href="map.html" class="sidebar-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+      Live Map
+    </a>
+    <a href="my-applications.html" class="sidebar-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Permits
+    </a>
+    <a href="visitor-pass.html" class="sidebar-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+      Visitor Pass
+    </a>
+    <a href="my-fines.html" class="sidebar-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Fines
+    </a>
+    <a href="notifications.html" class="sidebar-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Notifications
+    </a>
+    <div class="nav-section-label" style="margin-top: 12px;">Portals</div>
+    <a href="admin-approvals.html" class="sidebar-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Admin Approvals
+    </a>
+    <a href="issue-fine.html" class="sidebar-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Issue Fines
+    </a>
+    <a href="index.html" class="sidebar-nav-item logout" style="color: var(--error); margin-top: 8px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign Out
+    </a>
+  </nav>
+  <div class="drawer-footer">
+    <span>Powered by</span>
+    <img src="images/Dynamic Logo Design with Custom Typeface.png" alt="Helios">
+  </div>
+</aside>
+
+<!-- ================= SIDEBAR (desktop only) ================= -->
+<aside class="sidebar">
+  <div class="nav-section-label">Main</div>
+  <a href="dashboard.html" class="sidebar-nav-item active" data-nav="home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Home
+  </a>
+  <a href="map.html" class="sidebar-nav-item" data-nav="map">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+    Live Map
+  </a>
+  <a href="my-applications.html" class="sidebar-nav-item" data-nav="permits">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    Permits
+  </a>
+  <a href="visitor-pass.html" class="sidebar-nav-item" data-nav="visitor">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+    Visitor Pass
+  </a>
+  <a href="my-fines.html" class="sidebar-nav-item" data-nav="fines">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    Fines
+  </a>
+  <a href="notifications.html" class="sidebar-nav-item" data-nav="notifications">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    Notifications
+    <span class="nav-badge">3</span>
+  </a>
+
+  <div class="nav-section-label">Management</div>
+  <a href="admin-approvals.html" class="sidebar-nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Admin Approvals
+  </a>
+  <a href="issue-fine.html" class="sidebar-nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    Issue Fines
+  </a>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-powered-by">
+      <span>Powered by</span>
+      <img src="images/helios_logo_white.png" alt="Helios" class="sidebar-helios-logo">
+    </div>
+  </div>
+</aside>
+
+<!-- ================= MAIN CONTENT ================= -->
+<main class="main-content">
+
+  <!-- ---------- Welcome Card ---------- -->
+  <section class="card">
+    <div class="welcome-header-row">
+      <div class="greeting" id="greeting-text">Good morning, John</div>
+      <span class="status-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Permit Active
+      </span>
+    </div>
+
+    <div class="permit-details-card">
+      <div class="permit-grid">
+        <div class="permit-row">
+          <svg class="permit-row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M5 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm14 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM5 17V9l2-5h10l2 5v8M3 12h18"/></svg>
+          <div class="permit-row-text">
+            <span class="permit-label">Permit</span>
+            <span class="permit-value">STU-2024-00847</span>
+          </div>
+        </div>
+        <div class="permit-row">
+          <svg class="permit-row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <div class="permit-row-text">
+            <span class="permit-label">Valid</span>
+            <span class="permit-value">01 Jan – 31 Dec 2024</span>
+          </div>
+        </div>
+        <div class="permit-row">
+          <svg class="permit-row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <div class="permit-row-text">
+            <span class="permit-label">Zone</span>
+            <span class="permit-value">Student Parking Area 1</span>
+          </div>
+        </div>
+        <div class="permit-row">
+          <svg class="permit-row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+          <div class="permit-row-text">
+            <span class="permit-label">Plate</span>
+            <span class="permit-value">ABC 123 GP</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- Live Parking Card ---------- -->
+  <section class="card">
+    <div class="card-header-row">
+      <div class="card-title">
+        <svg class="live-dot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/>
+          <circle class="pulse-circle" cx="12" cy="12" r="6"/>
+          <circle class="pulse-circle" cx="12" cy="12" r="10" opacity="0.5"/>
+        </svg>
+        Live Parking Availability
+      </div>
+      <a href="map.html" class="view-map-link">
+        View Map
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+
+    <div class="capacity-grid">
+      <a href="map.html" class="capacity-card assigned">
+        <span class="status-dot dot-available"></span>
+        <span class="status-circle circle-available">24</span>
+        <div class="capacity-info">
+          <div class="capacity-zone-name">Area 1</div>
+          <div class="capacity-zone-type-mobile">Student Parking</div>
+          <div class="capacity-zone-type-desktop">Student Parking</div>
+        </div>
+        <div class="capacity-count">
+          <div class="capacity-spot-count count-available">24</div>
+          <div class="capacity-spot-label">Available</div>
+        </div>
+      </a>
+
+      <a href="map.html" class="capacity-card">
+        <span class="status-dot dot-limited"></span>
+        <span class="status-circle circle-limited">5</span>
+        <div class="capacity-info">
+          <div class="capacity-zone-name">Area 2</div>
+          <div class="capacity-zone-type-mobile">Student Parking</div>
+          <div class="capacity-zone-type-desktop">Student Parking</div>
+        </div>
+        <div class="capacity-count">
+          <div class="capacity-spot-count count-limited">5</div>
+          <div class="capacity-spot-label">Limited</div>
+        </div>
+      </a>
+
+      <a href="map.html" class="capacity-card dimmed">
+        <span class="status-dot dot-full"></span>
+        <span class="status-circle circle-full">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </span>
+        <div class="capacity-info">
+          <div class="capacity-zone-name">Area 3</div>
+          <div class="capacity-zone-type-mobile">Staff Only</div>
+          <div class="capacity-zone-type-desktop">Staff Only</div>
+        </div>
+        <div class="capacity-count">
+          <div class="capacity-spot-count count-full">Full</div>
+          <div class="capacity-spot-label">0 Available</div>
+        </div>
+      </a>
+    </div>
+
+    <div class="capacity-footer">
+      <span class="last-updated">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span id="last-updated-text">Updated 2 min ago</span>
+      </span>
+      <button class="refresh-btn" id="refresh-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        Refresh
+      </button>
+    </div>
+  </section>
+
+  <!-- ---------- Gate Congestion Card ---------- -->
+  <section class="card gate-card">
+    <div class="gate-header-row">
+      <span class="alert-icon-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </span>
+      <span class="gate-title">Gate Congestion Alert</span>
+    </div>
+
+    <div class="gate-rows">
+      <div class="gate-row">
+        <span class="gate-status-dot gate-dot-heavy"></span>
+        <span class="gate-name">Main Gate</span>
+        <span class="gate-status-badge badge-heavy">Heavy</span>
+        <span class="gate-wait">est. 15 min wait</span>
+      </div>
+      <div class="gate-row">
+        <span class="gate-status-dot gate-dot-moderate"></span>
+        <span class="gate-name">East Gate</span>
+        <span class="gate-status-badge badge-moderate">Moderate</span>
+        <span class="gate-wait">est. 5 min wait</span>
+      </div>
+      <div class="gate-row">
+        <span class="gate-status-dot gate-dot-light"></span>
+        <span class="gate-name">South Gate</span>
+        <span class="gate-status-badge badge-light">Light</span>
+        <span class="gate-wait">est. 0 min wait</span>
+      </div>
+    </div>
+
+    <div class="suggestion-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <span>Use South Gate for faster entry — estimated 0 min wait</span>
+    </div>
+  </section>
+
+  <!-- ---------- Quick Actions ---------- -->
+  <section class="card">
+    <div class="section-title">Quick Actions</div>
+    <div class="actions-grid">
+      <a href="apply-permit.html" class="action-card">
+        <span class="action-icon-box icon-apply">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        </span>
+        <span class="action-label">Apply for Permit</span>
+        <span class="action-sublabel">Start application</span>
+      </a>
+
+      <a href="my-fines.html" class="action-card">
+        <span class="action-icon-box icon-pay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </span>
+        <span class="action-label">Pay Fines</span>
+        <span class="action-sublabel">R0.00 outstanding</span>
+      </a>
+
+      <a href="my-applications.html" class="action-card">
+        <span class="action-icon-box icon-myapps">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </span>
+        <span class="action-label">My Applications</span>
+        <span class="action-sublabel">View status</span>
+      </a>
+
+      <a href="visitor-pass.html" class="action-card">
+        <span class="action-icon-box icon-visitor">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+        </span>
+        <span class="action-label">Visitor Pass</span>
+        <span class="action-sublabel">Generate code</span>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= BOTTOM NAVIGATION (mobile only) ================= -->
+<nav class="bottom-nav">
+  <a href="dashboard.html" class="bottom-nav-item active" data-nav="home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span class="bottom-nav-label">Home</span>
+  </a>
+  <a href="map.html" class="bottom-nav-item" data-nav="map">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+    <span class="bottom-nav-label">Map</span>
+  </a>
+  <a href="my-applications.html" class="bottom-nav-item" data-nav="permits">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    <span class="bottom-nav-label">Permits</span>
+  </a>
+  <a href="visitor-pass.html" class="bottom-nav-item" data-nav="visitor">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+    <span class="bottom-nav-label">Visitor</span>
+  </a>
+  <a href="my-fines.html" class="bottom-nav-item" data-nav="fines">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    <span class="bottom-nav-label">Fines</span>
+  </a>
+</nav>
+
+<script src="js/app-shell.js"></script>
+<script>
+  // ================= Time-based greeting =================
+  (function () {
+    var hour = new Date().getHours();
+    var greetingWord = hour < 12 ? 'Good morning' : (hour < 18 ? 'Good afternoon' : 'Good evening');
+    document.getElementById('greeting-text').textContent = greetingWord + ', John';
+  })();
+
+  // ================= Refresh button =================
+  var refreshBtn = document.getElementById('refresh-btn');
+  var lastUpdatedText = document.getElementById('last-updated-text');
+
+  refreshBtn.addEventListener('click', function () {
+    refreshBtn.classList.add('spinning');
+    setTimeout(function () {
+      refreshBtn.classList.remove('spinning');
+      lastUpdatedText.textContent = 'Updated just now';
+      if (window.showToast) window.showToast('Availability refreshed');
+    }, 800);
+  });
+</script>
+</body>
+</html>
