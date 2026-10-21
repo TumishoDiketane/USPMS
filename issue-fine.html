@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Issue Fine - USPMS Field Operations</title>
+    <link rel="stylesheet" href="css/theme.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary: #0F204B;
+            --accent: #A71930;
+            --success: #059669;
+            --warning: #D97706;
+            --error: #DC2626;
+            --text-primary: #0F204B;
+            --text-secondary: #636669;
+            --text-tertiary: #9EA3A8;
+            --surface: #FFFFFF;
+            --surface-secondary: #F8F9FA;
+            --border: rgba(15,32,75,0.08);
+            --border-strong: rgba(15,32,75,0.16);
+            --shadow-sm: 0 1px 3px rgba(15,32,75,0.04);
+            --shadow-md: 0 4px 6px -1px rgba(15,32,75,0.07);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--surface-secondary);
+            color: var(--text-primary);
+        }
+
+        /* HEADER */
+        .officer-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 150ms ease;
+            text-decoration: none;
+            color: var(--primary);
+        }
+        .back-btn:hover {
+            background: var(--surface-secondary);
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .header-left img.ufs-logo {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .officer-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logout-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 150ms;
+            text-decoration: none;
+        }
+        .logout-btn:hover {
+            background: var(--surface-secondary);
+            color: var(--error);
+        }
+
+        /* MAIN CONTAINER */
+        .officer-main {
+            max-width: 680px;
+            margin: 40px auto;
+            padding: 0 24px 40px;
+        }
+
+        /* SECTIONS */
+        .section-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(15,32,75,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* VIEWFINDER */
+        .viewfinder-container {
+            width: 100%;
+            height: 320px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        
+        .viewfinder-instruction {
+            position: absolute;
+            top: 20px;
+            color: rgba(255,255,255,0.8);
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 10;
+        }
+
+        .viewfinder-frame {
+            width: 260px;
+            height: 200px;
+            border: 2px dashed rgba(255,255,255,0.4);
+            border-radius: 12px;
+            position: relative;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.8);
+            border-radius: 4px;
+        }
+        .corner.tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+        .corner.tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+        .corner.bl { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+        .corner.br { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+        .scan-line {
+            position: absolute;
+            top: 10%;
+            left: 15%;
+            right: 15%;
+            height: 1px;
+            background: rgba(255,255,255,0.6);
+            box-shadow: 0 0 4px rgba(255,255,255,0.8);
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 10%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 90%; opacity: 0; }
+        }
+
+        .crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            transform: translate(-50%, -50%);
+        }
+        .crosshair::before, .crosshair::after {
+            content: '';
+            position: absolute;
+            background: rgba(255,255,255,0.6);
+        }
+        .crosshair::before { top: 50%; left: 0; right: 0; height: 1px; }
+        .crosshair::after { left: 50%; top: 0; bottom: 0; width: 1px; }
+
+        .or-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 24px 0;
+            width: 100%;
+        }
+        .or-divider::before, .or-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+        .or-text {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+
+        .manual-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            gap: 8px;
+            height: 44px;
+            padding: 0 20px;
+            background: var(--surface-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 150ms;
+        }
+        .manual-btn:hover {
+            background: rgba(15,32,75,0.04);
+            border-color: var(--border-strong);
+        }
+
+        /* MANUAL ENTRY FORM */
+        .manual-entry-form {
+            display: none;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .plate-input {
+            flex: 1;
+            height: 44px;
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+            padding: 0 16px;
+            font-size: 14px;
+            color: var(--primary);
+            outline: none;
+            text-transform: uppercase;
+        }
+        .plate-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15,32,75,0.12);
+        }
+        .search-plate-btn {
+            height: 44px;
+            padding: 0 20px;
+            background: var(--primary);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* VEHICLE INFO */
+        #vehicleInfoContainer { display: none; }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .info-label { font-size: 12px; color: var(--text-tertiary); }
+        .info-val { font-size: 14px; color: var(--primary); font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        
+        .warning-box, .notice-box {
+            margin-top: 24px;
+            padding: 16px 18px;
+            background: var(--error-subtle, #FEF2F2);
+            border: 1px solid rgba(220,38,38,0.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .warning-box p, .notice-box p {
+            font-size: 13px;
+            color: #991B1B;
+            line-height: 1.5;
+            margin-top: 2px;
+        }
+
+        /* FORM ELEMENTS */
+        .form-group { margin-top: 20px; }
+        .form-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .sub-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .select-input {
+            width: 100%;
+            height: 52px;
+            border: 1px solid rgba(15,32,75,0.12);
+            border-radius: 8px;
+            padding: 0 44px 0 16px;
+            font-size: 14px;
+            color: var(--primary);
+            background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230F204B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 12 18 15'%3E%3C/svg%3E") no-repeat right 16px center;
+            appearance: none;
+            cursor: pointer;
+            outline: none;
+            transition: all 150ms;
+        }
+        .select-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15,32,75,0.12); }
+        .select-input.error { border-color: var(--error); box-shadow: 0 0 0 3px rgba(220,38,38,0.1); }
+
+        .location-row {
+            display: flex;
+            gap: 12px;
+        }
+        .location-input {
+            flex: 1;
+            height: 48px;
+            border: 1px solid rgba(15,32,75,0.12);
+            border-radius: 8px;
+            padding: 0 16px;
+            font-size: 14px;
+            color: var(--primary);
+            outline: none;
+        }
+        .location-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15,32,75,0.12); }
+        .location-input.error { border-color: var(--error); box-shadow: 0 0 0 3px rgba(220,38,38,0.1); }
+
+        .btn-use-location {
+            height: 48px;
+            padding: 0 20px;
+            border: 1px solid rgba(15,32,75,0.12);
+            border-radius: 8px;
+            background: white;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 150ms;
+            white-space: nowrap;
+        }
+        .btn-use-location:hover { background: var(--surface-secondary); color: var(--primary); }
+
+        .notes-textarea {
+            width: 100%;
+            min-height: 120px;
+            border: 1px solid rgba(15,32,75,0.12);
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 14px;
+            color: var(--primary);
+            background: white;
+            resize: vertical;
+            line-height: 1.5;
+            outline: none;
+            transition: all 150ms;
+        }
+        .notes-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15,32,75,0.12); }
+
+        /* PHOTO GRID */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .photo-box {
+            aspect-ratio: 1/1;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        .photo-upload-btn {
+            border: 2px dashed rgba(15,32,75,0.15);
+            background: rgba(15,32,75,0.02);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 150ms;
+            color: var(--text-tertiary);
+        }
+        .photo-upload-btn:hover {
+            border-color: rgba(15,32,75,0.25);
+            background: rgba(15,32,75,0.05);
+            color: var(--primary);
+        }
+        .photo-preview {
+            border: 1px solid var(--border);
+        }
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+        .remove-photo {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(220,38,38,0.95);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 150ms;
+        }
+        .photo-preview:hover .remove-photo { opacity: 1; }
+        
+        #photoInput { display: none; }
+
+        /* ACTION BUTTONS */
+        .btn-submit {
+            width: 100%;
+            height: 52px;
+            background: var(--error);
+            border: 1px solid var(--error);
+            border-radius: 10px;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 150ms ease;
+            margin-top: 24px;
+        }
+        .btn-submit:hover:not(:disabled) { background: #B91C1C; }
+        .btn-submit:active:not(:disabled) { background: #7A1225; transform: scale(0.98); }
+
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+            color: transparent !important;
+        }
+        .btn-loading::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--success);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(15,32,75,0.2);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 300ms ease;
+        }
+        .toast.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        #violationFormArea {
+            display: none;
+            opacity: 0;
+            transition: opacity 300ms ease;
+        }
+        #violationFormArea.visible {
+            display: block;
+            opacity: 1;
+        }
+
+        @media (max-width: 1023px) {
+            .officer-header { padding: 12px 16px; }
+            .page-title { font-size: 20px; }
+            .officer-main { margin-top: 20px; padding: 0 16px 40px; }
+            .viewfinder-container { height: 280px; }
+            .viewfinder-frame { width: 220px; height: 180px; }
+            .info-grid { grid-template-columns: 1fr; }
+            .location-row { flex-direction: column; }
+            .btn-use-location { width: 100%; justify-content: center; }
+            .notes-textarea { min-height: 100px; }
+            .remove-photo { opacity: 1; /* Always show on mobile since no hover */ }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="officer-header">
+        <div class="header-left">
+            <a href="admin-approvals.html" class="back-btn" title="Back to Admin Approvals">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </a>
+            <img src="images/University_of_the_Free_State_shield.svg" alt="UFS" class="ufs-logo">
+            <div style="width: 1px; height: 22px; background: rgba(15,32,75,0.12); margin: 0 4px;"></div>
+            <img src="images/Dynamic Logo Design with Custom Typeface.png" alt="Helios" style="height: 24px; width: auto; object-fit: contain;">
+            <div class="page-title">Issue Fine</div>
+        </div>
+        <div class="header-right">
+            <div class="officer-name">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <span class="d-none-mobile">T. Mokoena</span>
+            </div>
+            <a href="index.html" class="logout-btn" title="Sign out">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            </a>
+        </div>
+    </header>
+
+    <main class="officer-main">
+        
+        <div class="section-card" id="scanSection">
+            <div class="section-header">
+                <div class="section-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                </div>
+                <div class="section-title">Identify Vehicle</div>
+            </div>
+
+            <div class="viewfinder-container" id="cameraViewfinder" onclick="simulateScan()">
+                <div class="viewfinder-instruction">Tap to scan License Plate / QR</div>
+                <div class="viewfinder-frame">
+                    <div class="corner tl"></div>
+                    <div class="corner tr"></div>
+                    <div class="corner bl"></div>
+                    <div class="corner br"></div>
+                    <div class="scan-line"></div>
+                    <div class="crosshair"></div>
+                </div>
+            </div>
+
+            <div class="or-divider"><span class="or-text">OR</span></div>
+
+            <button class="manual-btn" id="toggleManualBtn" onclick="toggleManualEntry()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                Enter Details Manually
+            </button>
+
+            <div class="manual-entry-form" id="manualEntryForm">
+                <input type="text" class="plate-input" placeholder="Enter License Plate..." id="manualPlateInput">
+                <button class="search-plate-btn" onclick="simulateManualSearch()">Search</button>
+            </div>
+        </div>
+
+        <div class="section-card" id="vehicleInfoContainer">
+            <div class="section-header" style="justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="section-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                    </div>
+                    <div class="section-title">Vehicle Details</div>
+                </div>
+                <button class="manual-btn" style="width: auto; height: 36px; background: white;" onclick="resetScan()">Rescan</button>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Name</span>
+                    <span class="info-val"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>John Smith</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Vehicle</span>
+                    <span class="info-val"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>Toyota Corolla - ABC 123 GP</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Permit</span>
+                    <span class="info-val"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>STU-2024-00847 (Active)</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Assigned Zone</span>
+                    <span class="info-val"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Student Parking Area 1</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Status</span>
+                    <span class="info-val" style="color: var(--success);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>Verified</span>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0; margin-top:2px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                <div>
+                    <strong style="color: #991B1B; font-size: 13px; display: block; margin-bottom: 2px;">Zone Violation Detected</strong>
+                    <p>Vehicle is parked in STAFF ZONE 3 - Not assigned to this vehicle. Issue fine or relocate vehicle.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="violationFormArea">
+            <div class="section-card">
+                <div class="sub-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    Violation Details
+                </div>
+                
+                <div class="form-group" style="margin-top: 0;">
+                    <label class="form-label">Violation Type</label>
+                    <select class="select-input" id="violationType">
+                        <option value="" disabled selected>Select violation type...</option>
+                        <option value="1">Unauthorized parking in restricted zone</option>
+                        <option value="2">Parking outside designated bay</option>
+                        <option value="3">Expired or invalid permit</option>
+                        <option value="4">Blocking traffic flow</option>
+                        <option value="5">Parking in disabled bay without permit</option>
+                        <option value="6">Vehicle not displaying permit</option>
+                        <option value="7">Expired visitor code</option>
+                        <option value="8">Wrong zone for permit type</option>
+                        <option value="9">Non-compliance with parking regulations</option>
+                        <option value="10">Other (specify in notes)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <div class="location-row">
+                        <input type="text" class="location-input" id="locationInput" placeholder="E.g. Staff Parking Area 3, Bay 12">
+                        <button class="btn-use-location" id="geoBtn" onclick="useCurrentLocation()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+                            Use current location
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Additional Notes</label>
+                    <textarea class="notes-textarea" id="notesInput" placeholder="Add any additional notes about the violation..."></textarea>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="form-label" style="margin-bottom: 16px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                    Photo Evidence (Max 9)
+                </div>
+                
+                <div class="photo-grid" id="photoGrid">
+                    <div class="photo-box photo-upload-btn" id="uploadBtn" onclick="document.getElementById('photoInput').click()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </div>
+                </div>
+                <input type="file" id="photoInput" accept="image/*" multiple>
+            </div>
+
+            <div class="notice-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0; margin-top:2px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                <div>
+                    <strong style="color: #991B1B; font-size: 13px; display: block; margin-bottom: 2px;">Important Notice</strong>
+                    <p>The system will log the infraction and notify the vehicle owner immediately. This action is permanent and cannot be undone.</p>
+                </div>
+            </div>
+
+            <button class="btn-submit" id="submitFineBtn" onclick="submitFine()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                ISSUE FINE
+            </button>
+        </div>
+
+    </main>
+
+    <div class="toast" id="toast">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <span>Fine issued successfully.</span>
+    </div>
+
+    <script>
+        // UI Logic
+        function toggleManualEntry() {
+            const form = document.getElementById('manualEntryForm');
+            if (form.style.display === 'flex') {
+                form.style.display = 'none';
+                document.getElementById('toggleManualBtn').innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg> Enter Details Manually`;
+            } else {
+                form.style.display = 'flex';
+                document.getElementById('manualPlateInput').focus();
+                document.getElementById('toggleManualBtn').innerHTML = `Cancel Manual Entry`;
+            }
+        }
+
+        function simulateScan() {
+            const viewfinder = document.getElementById('cameraViewfinder');
+            viewfinder.style.boxShadow = 'inset 0 0 0 4px rgba(5, 150, 105, 0.5)';
+            setTimeout(() => {
+                showVehicleInfo();
+                viewfinder.style.boxShadow = 'none';
+            }, 800);
+        }
+
+        function simulateManualSearch() {
+            const input = document.getElementById('manualPlateInput').value;
+            if (input.trim() === '') {
+                document.getElementById('manualPlateInput').style.borderColor = 'var(--error)';
+                return;
+            }
+            document.querySelector('.search-plate-btn').textContent = 'Searching...';
+            setTimeout(() => {
+                document.querySelector('.search-plate-btn').textContent = 'Search';
+                showVehicleInfo();
+            }, 600);
+        }
+
+        function showVehicleInfo() {
+            document.getElementById('scanSection').style.display = 'none';
+            document.getElementById('vehicleInfoContainer').style.display = 'block';
+            
+            const formArea = document.getElementById('violationFormArea');
+            formArea.classList.add('visible');
+            
+            // Auto select "Wrong zone" based on warning
+            document.getElementById('violationType').value = "8";
+        }
+
+        function resetScan() {
+            document.getElementById('scanSection').style.display = 'block';
+            document.getElementById('vehicleInfoContainer').style.display = 'none';
+            
+            const formArea = document.getElementById('violationFormArea');
+            formArea.classList.remove('visible');
+            
+            document.getElementById('manualPlateInput').value = '';
+            document.getElementById('manualPlateInput').style.borderColor = 'var(--border-strong)';
+            
+            // Reset form
+            document.getElementById('violationType').value = "";
+            document.getElementById('violationType').classList.remove('error');
+            document.getElementById('locationInput').value = "";
+            document.getElementById('locationInput').classList.remove('error');
+            document.getElementById('notesInput').value = "";
+            
+            // Clear photos
+            document.querySelectorAll('.photo-preview').forEach(el => el.remove());
+            photoCount = 0;
+            document.getElementById('uploadBtn').style.display = 'flex';
+        }
+
+        function useCurrentLocation() {
+            const btn = document.getElementById('geoBtn');
+            const input = document.getElementById('locationInput');
+            
+            btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg> Locating...`;
+            btn.style.pointerEvents = 'none';
+            
+            setTimeout(() => {
+                input.value = "Staff Parking Area 3, near South Gate";
+                input.classList.remove('error');
+                btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Found`;
+                btn.style.color = "var(--success)";
+                btn.style.borderColor = "var(--success)";
+                
+                setTimeout(() => {
+                    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg> Use current location`;
+                    btn.style.color = "var(--text-secondary)";
+                    btn.style.borderColor = "var(--border)";
+                    btn.style.pointerEvents = 'auto';
+                }, 2000);
+            }, 1000);
+        }
+
+        // Photo Upload Logic
+        const photoGrid = document.getElementById('photoGrid');
+        const fileInput = document.getElementById('photoInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        let photoCount = 0;
+
+        fileInput.addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            
+            files.forEach(file => {
+                if(photoCount >= 9) return;
+                
+                const url = URL.createObjectURL(file);
+                createPhotoPreview(url);
+                photoCount++;
+            });
+            
+            updateUploadButtonVisibility();
+            // Reset input so same file can be selected again if needed
+            this.value = '';
+        });
+
+        function createPhotoPreview(url) {
+            const previewDiv = document.createElement('div');
+            previewDiv.className = 'photo-box photo-preview';
+            
+            previewDiv.innerHTML = `
+                <img src="${url}" alt="Evidence">
+                <div class="remove-photo" onclick="removePhoto(this)">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </div>
+            `;
+            
+            photoGrid.insertBefore(previewDiv, uploadBtn);
+        }
+
+        function removePhoto(btn) {
+            btn.parentElement.remove();
+            photoCount--;
+            updateUploadButtonVisibility();
+        }
+
+        function updateUploadButtonVisibility() {
+            if(photoCount >= 9) {
+                uploadBtn.style.display = 'none';
+            } else {
+                uploadBtn.style.display = 'flex';
+            }
+        }
+
+        // Form Submission
+        function submitFine() {
+            let isValid = true;
+            const type = document.getElementById('violationType');
+            const loc = document.getElementById('locationInput');
+            
+            if(!type.value) {
+                type.classList.add('error');
+                isValid = false;
+            } else {
+                type.classList.remove('error');
+            }
+            
+            if(!loc.value.trim()) {
+                loc.classList.add('error');
+                isValid = false;
+            } else {
+                loc.classList.remove('error');
+            }
+            
+            if(!isValid) {
+                // Scroll to first error
+                document.querySelector('.error').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            const btn = document.getElementById('submitFineBtn');
+            btn.classList.add('btn-loading');
+            
+            setTimeout(() => {
+                btn.classList.remove('btn-loading');
+                
+                // Show toast
+                const toast = document.getElementById('toast');
+                toast.classList.add('visible');
+                
+                // Reset form to start
+                setTimeout(() => {
+                    toast.classList.remove('visible');
+                    resetScan();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 2500);
+                
+            }, 1500);
+        }
+        
+        // Remove error states on input
+        document.getElementById('violationType').addEventListener('change', function() {
+            this.classList.remove('error');
+        });
+        document.getElementById('locationInput').addEventListener('input', function() {
+            this.classList.remove('error');
+        });
+        document.getElementById('manualPlateInput').addEventListener('input', function() {
+            this.style.borderColor = 'var(--border-strong)';
+        });
+    </script>
+</body>
+</html>
